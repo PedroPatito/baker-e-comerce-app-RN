@@ -4,8 +4,10 @@ import ProductsItem from '../components/ProductsItem'
 import { Products } from '../data/products'
 const ProductsScreen = ({navigation, route}) => {
 
+  const newProducts = Products.filter(product => product.category === route.params.categoryId)
+
   const handleSelectedProduct = (item) =>{
-    navigation.navigate("Products", {
+    navigation.navigate("Details", {
       categoryId: item.category,
       title: item.name,
       descripcion: item.descripcion,
@@ -21,13 +23,12 @@ const ProductsScreen = ({navigation, route}) => {
 
 
   return (
-    <View style={styles.container} >
       <FlatList
-      data={Products}
+      data={newProducts}
       renderItem={renderProductsItem}
       keyExtractor={item => item.id}
+      numColumns={2}
       />
-      </View>
     
   )
 }
@@ -43,6 +44,6 @@ const styles = StyleSheet.create({
   productsContainer:{
     flex: 1,
     height: 150,
-    // width: 150,
+    width: 150,
   }
 })
