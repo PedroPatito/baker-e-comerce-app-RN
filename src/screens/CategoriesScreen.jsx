@@ -1,46 +1,48 @@
-import { StyleSheet, View, FlatList } from 'react-native'
-import React from 'react'
-import CategoriesItem from '../components/CategoriesItem'
-import { Categories } from '../data/categories'
+import { StyleSheet, View, FlatList } from "react-native";
+import React from "react";
+import CategoriesItem from "../components/CategoriesItem";
+import { useSelector, useDispatch } from "react-redux";
+import { selectedCategory } from "../store/actions/category.action";
 
-const CategoriesScreen = ({navigation}) => {
+const CategoriesScreen = ({ navigation }) => {
+  const categories = useSelector((state) => state.categories.categories);
+  const dispatch = useDispatch();
 
-  const handleSelectedCategory = (item) =>{
+  const handleSelectedCategory = (item) => {
+    dispatch(selectedCategory(item.id));
     navigation.navigate("Products", {
-      categoryId: item.id,
-      title: item.title
-    })
-  }
+      title: item.title,
+    });
+  };
 
-  const renderCategoriesItem = ({item}) =>(
+  const renderCategoriesItem = ({ item }) => (
     <View style={styles.categoriesContainer}>
-    <CategoriesItem item={item} onSelected={handleSelectedCategory} />
+      <CategoriesItem item={item} onSelected={handleSelectedCategory} />
     </View>
-  )
+  );
 
-  return ( 
+  return (
     <View style={styles.container}>
       <FlatList
-      data={Categories}
-      renderItem={renderCategoriesItem}
-      keyExtractor={item => item.id}
+        data={categories}
+        renderItem={renderCategoriesItem}
+        keyExtractor={(item) => item.id}
       />
-      </View>
-  )
-}
+    </View>
+  );
+};
 
-export default CategoriesScreen
+export default CategoriesScreen;
 
 const styles = StyleSheet.create({
-  container:{
+  container: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "white",
   },
-  categoriesContainer:{
+  categoriesContainer: {
     padding: 15,
     height: 180,
-    
-  }
-})
+  },
+});

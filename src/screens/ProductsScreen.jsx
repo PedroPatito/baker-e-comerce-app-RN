@@ -1,49 +1,57 @@
-import { StyleSheet, View, FlatList } from 'react-native'
-import React from 'react'
-import ProductsItem from '../components/ProductsItem'
-import { Products } from '../data/products'
-const ProductsScreen = ({navigation, route}) => {
+import { StyleSheet, View, FlatList } from "react-native";
+import React, { useEffect } from "react";
+import ProductsItem from "../components/ProductsItem";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  selectedProduct,
+  filteredProduct,
+} from "../store/actions/products.action";
 
-  const newProducts = Products.filter(product => product.category === route.params.categoryId)
+const ProductsScreen = ({ navigation, route }) => {
+  const dispatch = useDispatch();
+  const categoryProducts = useSelector(
+    (state) => state.products.filteredProduct
+  );
+  const category = useSelector((state) => state.categories.selected);
 
-  const handleSelectedProduct = (item) =>{
+  useEffect(() => {
+    dispatch(filteredProduct(category.id));
+  }, []);
+
+  const handleSelectedProduct = (item) => {
+    dispatch(selectedProduct(item.id));
     navigation.navigate("Details", {
-      categoryId: item.category,
-      title: item.name,
-      descripcion: item.descripcion,
-      price: item.price,
-    })
-  }
+      name: item.name,
+    });
+  };
 
-  const renderProductsItem = ({item}) =>(
+  const renderProductsItem = ({ item }) => (
     <View style={styles.productsContainer}>
-    <ProductsItem item={item} onSelected={handleSelectedProduct} />
+      <ProductsItem item={item} onSelected={handleSelectedProduct} />
     </View>
-  )
-
+  );
 
   return (
-      <FlatList
-      data={newProducts}
+    <FlatList
+      data={categoryProducts}
       renderItem={renderProductsItem}
-      keyExtractor={item => item.id}
+      keyExtractor={(item) => item.id}
       numColumns={2}
-      />
-    
-  )
-}
+    />
+  );
+};
 
-export default ProductsScreen
+export default ProductsScreen;
 
 const styles = StyleSheet.create({
-  container:{
+  container: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
-  productsContainer:{
+  productsContainer: {
     flex: 1,
     height: 150,
     width: 150,
-  }
-})
+  },
+});
